@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a3e12">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Elaboración Dulce de Leche</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%AF%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#fbf6ef; --card:#ffffff; --ink:#2b1a0e; --muted:#6b5546;
+    --brand:#7a3e12; --brand-2:#a85a1f; --ok:#1f7a3a; --warn:#b45309; --err:#b42318;
+    --line:#d9c8b6; --focus:#f5b041; --soft:#f3e7d8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1c140e; --card:#2a1f17; --ink:#fbefe2; --muted:#cdb7a3;
+      --brand:#e0a165; --brand-2:#f0b47a; --line:#5a4535; --soft:#3a2b20;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+       font-size:22px;line-height:1.35;-webkit-text-size-adjust:100%}
+  header{background:var(--brand);color:#fff;padding:14px 16px 10px;position:sticky;top:0;z-index:5}
+  @media (prefers-color-scheme: dark){header{color:#1c140e}}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  header h1{font-size:24px;margin:0;line-height:1.2}
+  header .user{font-size:19px;opacity:.95;margin-top:4px}
+  .gear{background:transparent;border:2px solid currentColor;color:inherit;border-radius:12px;font-size:24px;
+        min-width:54px;min-height:54px;cursor:pointer}
+  nav.tabs{display:flex;gap:6px;padding:10px 10px 0;background:var(--bg)}
+  .tabs button{flex:1;font-size:19px;font-weight:700;padding:14px 4px;border:2px solid var(--line);border-bottom:none;
+       background:var(--soft);color:var(--ink);border-radius:14px 14px 0 0;min-height:64px;cursor:pointer}
+  .tabs button.on{background:var(--card);color:var(--brand);border-color:var(--brand)}
+  main{max-width:640px;margin:0 auto;padding:0 12px 140px}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:0 0 18px 18px;padding:18px 16px 8px}
+  .card.solo{border-radius:18px;margin-top:16px}
+  h2{font-size:26px;margin:4px 0 14px;color:var(--brand)}
+  .step{font-size:18px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  label{display:block;font-weight:700;font-size:23px;margin:16px 0 8px}
+  input,textarea,select{width:100%;font-size:26px;padding:14px 14px;border:3px solid var(--line);border-radius:14px;
+       background:#fff;color:#2b1a0e;min-height:68px;font-family:inherit}
+  textarea{min-height:140px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:4px solid var(--focus);border-color:var(--brand)}
+  input[type=date]{font-size:26px;font-weight:700}
+  .hint{font-size:18px;color:var(--muted);margin-top:6px}
+  .grid3 label{font-size:22px}
+  .btn{display:block;width:100%;font-size:26px;font-weight:800;padding:18px;border-radius:16px;border:none;
+       min-height:76px;cursor:pointer;margin:12px 0;font-family:inherit}
+  .btn-save{background:var(--ok);color:#fff}
+  .btn-next{background:var(--brand);color:#fff}
+  @media (prefers-color-scheme: dark){.btn-next{color:#1c140e}}
+  .btn-back{background:var(--soft);color:var(--ink);border:3px solid var(--line)}
+  .btn-ghost{background:transparent;color:var(--brand);border:3px solid var(--brand)}
+  .btn-danger{background:transparent;color:var(--err);border:3px solid var(--err)}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:3px solid var(--line);
+       padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:6}
+  .bar .in{max-width:640px;margin:0 auto;display:flex;gap:10px}
+  .bar .btn{margin:0}
+  .bar .btn-back{flex:0 0 32%}
+  .users{display:flex;flex-direction:column;gap:12px;margin:10px 0 20px}
+  .users button{font-size:26px;font-weight:700;padding:18px;border-radius:16px;border:3px solid var(--brand);
+       background:var(--soft);color:var(--ink);min-height:76px;text-align:left;cursor:pointer}
+  .users button::before{content:"👤  "}
+  .hist{list-style:none;padding:0;margin:0}
+  .hist li{border:2px solid var(--line);border-radius:16px;padding:14px;margin:0 0 14px;background:var(--bg)}
+  .hist .top{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:22px}
+  .hist dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0 0;font-size:19px}
+  .hist dt{color:var(--muted)} .hist dd{margin:0;font-weight:600;word-break:break-word}
+  .tag{font-size:16px;padding:4px 10px;border-radius:999px;white-space:nowrap;align-self:flex-start}
+  .tag.ok{background:#d9f2e1;color:#14532d} .tag.pend{background:#fde9c8;color:#7c2d12}
+  .toast{position:fixed;left:12px;right:12px;bottom:110px;max-width:600px;margin:0 auto;padding:18px;border-radius:16px;
+       font-size:22px;font-weight:700;text-align:center;color:#fff;background:var(--ok);box-shadow:0 8px 24px rgba(0,0,0,.25);
+       z-index:20;display:none}
+  .toast.err{background:var(--err)}
+  .empty{color:var(--muted);text-align:center;padding:30px 0}
+  .status{font-size:18px;padding:10px 14px;border-radius:12px;background:var(--soft);margin:6px 0 10px}
+  .hidden{display:none!important}
+  .row2{display:flex;gap:10px} .row2>*{flex:1}
+</style>
+</head>
+<body>
+
+<!-- ===== PANTALLA: ELEGIR USUARIO ===== -->
+<section id="vUser" class="hidden">
+  <header><div class="hrow"><h1>🍯 Elaboración de Dulce de Leche</h1></div></header>
+  <main>
+    <div class="card solo">
+      <h2>¿Quién está elaborando?</h2>
+      <div id="userList" class="users"></div>
+      <label for="newUser">Escriba su nombre</label>
+      <input id="newUser" type="text" autocomplete="name" placeholder="Nombre y apellido">
+      <button class="btn btn-next" id="btnAddUser">Entrar ➜</button>
+    </div>
+  </main>
+</section>
+
+<!-- ===== APP ===== -->
+<section id="vApp" class="hidden">
+  <header>
+    <div class="hrow">
+      <div>
+        <h1>🍯 Dulce de Leche</h1>
+        <div class="user">Responsable: <b id="who"></b></div>
+      </div>
+      <button class="gear" id="btnCfg" aria-label="Opciones">⚙️</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button data-tab="1" class="on">1<br>Inicio</button>
+    <button data-tab="2">2<br>Unidades</button>
+    <button data-tab="3">3<br>Lote</button>
+    <button data-tab="h">📋<br>Historial</button>
+  </nav>
+
+  <main>
+    <!-- PASO 1 -->
+    <div class="card" data-pane="1">
+      <div class="step">Paso 1 de 3</div>
+      <h2>Datos de inicio</h2>
+      <label for="f_fecha">Fecha de elaboración</label>
+      <input id="f_fecha" type="date">
+      <label for="f_producto">Producto Inicial</label>
+      <input id="f_producto" type="text" placeholder="Ej: Dulce de leche familiar">
+      <label for="f_loteBase">N° de Lote del DDL Base</label>
+      <input id="f_loteBase" type="text" autocapitalize="characters" placeholder="Ej: B-1024">
+      <div class="hint">Puede tener letras y números.</div>
+    </div>
+
+    <!-- PASO 2 -->
+    <div class="card hidden" data-pane="2">
+      <div class="step">Paso 2 de 3</div>
+      <h2>Agregado y unidades</h2>
+      <label for="f_agregado">Agregado</label>
+      <input id="f_agregado" type="text" placeholder="Ej: Chocolate, Coco, Nuez…">
+      <div class="grid3">
+        <label for="f_potes1kg">Potes de 1 Kg</label>
+        <input id="f_potes1kg" type="text" placeholder="Cantidad">
+        <label for="f_fr200">Frascos de 200 cc</label>
+        <input id="f_fr200" type="text" placeholder="Cantidad">
+        <label for="f_fr360">Frascos de 360 cc</label>
+        <input id="f_fr360" type="text" placeholder="Cantidad">
+      </div>
+    </div>
+
+    <!-- PASO 3 -->
+    <div class="card hidden" data-pane="3">
+      <div class="step">Paso 3 de 3</div>
+      <h2>Lote elaborado</h2>
+      <label for="f_loteElab">N° de Lote del DDL Elaborado</label>
+      <input id="f_loteElab" type="text" autocapitalize="characters" placeholder="Ej: E-2051">
+      <label for="f_venc">Fecha de Vencimiento</label>
+      <input id="f_venc" type="date">
+      <label for="f_obs">Observaciones</label>
+      <textarea id="f_obs" placeholder="Escriba aquí cualquier comentario"></textarea>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="card hidden" data-pane="h">
+      <h2>Mis últimos 20 registros</h2>
+      <div id="syncStatus" class="status"></div>
+      <button class="btn btn-ghost" id="btnSync">🔄 Enviar pendientes a la planilla</button>
+      <ul id="histList" class="hist"></ul>
+    </div>
+
+    <!-- OPCIONES -->
+    <div class="card hidden" data-pane="cfg">
+      <h2>Opciones</h2>
+      <button class="btn btn-ghost" id="btnChangeUser">👤 Cambiar de responsable</button>
+      <button class="btn btn-back" id="btnNew">🧹 Empezar un registro nuevo (borrar lo escrito)</button>
+      <label for="cfgUrl">Dirección de la planilla de Google</label>
+      <input id="cfgUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:18px">
+      <div class="hint">La configura el administrador una sola vez. Si ya viene cargada, no la toque.</div>
+      <button class="btn btn-next" id="btnSaveCfg">Guardar dirección</button>
+      <button class="btn btn-back" id="btnCloseCfg">⬅ Volver</button>
+    </div>
+  </main>
+
+  <div class="bar" id="bar">
+    <div class="in">
+      <button class="btn btn-back" id="btnPrev">⬅ Atrás</button>
+      <button class="btn btn-save" id="btnSave">💾 Guardar registro</button>
+    </div>
+    <div class="in" style="margin-top:8px">
+      <button class="btn btn-next" id="btnNext">Siguiente ➜</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN: pegue aquí la dirección de su Apps Script (termina en /exec)
+   También se puede cargar desde ⚙️ Opciones, o con el enlace ?hoja=URL
+   ===================================================================== */
+const SHEET_URL_DEFAULT = "";
+
+const K = { users:"ddl_users", cur:"ddl_currentUser", recs:"ddl_records", draft:"ddl_draft", url:"ddl_sheetUrl" };
+const FIELDS = ["fecha","producto","loteBase","agregado","potes1kg","fr200","fr360","loteElab","venc","obs"];
+const LABELS = { fecha:"Fecha", producto:"Producto inicial", loteBase:"Lote DDL base", agregado:"Agregado",
+  potes1kg:"Potes 1 Kg", fr200:"Frascos 200 cc", fr360:"Frascos 360 cc", loteElab:"Lote elaborado",
+  venc:"Vencimiento", obs:"Observaciones" };
+
+const $ = id => document.getElementById(id);
+function load(k, d){ try{ const v = localStorage.getItem(k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+function today(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+function fmt(iso){ if(!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso||""; const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y; }
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+let toastT;
+function toast(msg, err){ const t=$("toast"); t.textContent=msg; t.className="toast"+(err?" err":""); t.style.display="block";
+  clearTimeout(toastT); toastT=setTimeout(()=>t.style.display="none", 3500); }
+
+/* ---------- URL de la planilla ---------- */
+(function(){ const p=new URLSearchParams(location.search).get("hoja"); if(p){ save(K.url,p); history.replaceState(null,"",location.pathname); } })();
+function sheetUrl(){ return load(K.url,"") || SHEET_URL_DEFAULT; }
+
+/* ---------- Usuarios ---------- */
+function showUserScreen(){
+  $("vApp").classList.add("hidden"); $("vUser").classList.remove("hidden");
+  const list=$("userList"); list.innerHTML="";
+  load(K.users,[]).forEach(n=>{ const b=document.createElement("button"); b.textContent=n; b.onclick=()=>enter(n); list.appendChild(b); });
+  if(!list.children.length) list.innerHTML='<div class="hint">Todavía no hay nombres cargados en este celular.</div>';
+}
+function enter(name){
+  name=name.trim().replace(/\s+/g," "); if(!name){ toast("Escriba su nombre", true); return; }
+  const u=load(K.users,[]); if(!u.some(x=>x.toLowerCase()===name.toLowerCase())){ u.push(name); u.sort(); save(K.users,u); }
+  save(K.cur,name); $("newUser").value=""; startApp();
+}
+$("btnAddUser").onclick=()=>enter($("newUser").value);
+$("newUser").addEventListener("keydown",e=>{ if(e.key==="Enter") enter($("newUser").value); });
+
+/* ---------- Formulario y borrador ---------- */
+function readForm(){ const o={}; FIELDS.forEach(f=>o[f]=$("f_"+f).value.trim()); return o; }
+function fillForm(o){ FIELDS.forEach(f=>$("f_"+f).value=(o&&o[f])||""); if(!$("f_fecha").value) $("f_fecha").value=today(); }
+FIELDS.forEach(f=>$("f_"+f).addEventListener("input",()=>save(K.draft,readForm())));
+
+/* ---------- Pestañas ---------- */
+let tab="1";
+function go(t){
+  tab=t;
+  document.querySelectorAll("[data-pane]").forEach(p=>p.classList.toggle("hidden", p.dataset.pane!==t));
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
+  const isForm=["1","2","3"].includes(t);
+  $("bar").classList.toggle("hidden", !isForm);
+  $("btnPrev").classList.toggle("hidden", t==="1");
+  $("btnNext").parentElement.classList.toggle("hidden", t==="3");
+  if(t==="h") renderHist();
+  if(t==="cfg") $("cfgUrl").value=sheetUrl();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+$("btnNext").onclick=()=>go(String(Math.min(3, +tab+1)));
+$("btnPrev").onclick=()=>go(String(Math.max(1, +tab-1)));
+
+/* ---------- Guardar ---------- */
+$("btnSave").onclick=()=>{
+  const r=readForm();
+  if(!r.fecha){ go("1"); $("f_fecha").focus(); toast("Falta la fecha de elaboración", true); return; }
+  if(!r.producto && !r.loteBase && !r.loteElab){ toast("Complete al menos el producto o un N° de lote", true); return; }
+  r.responsable=load(K.cur,"");
+  r.id=Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+  r.guardado=new Date().toISOString();
+  r.enviado=false;
+  const recs=load(K.recs,[]); recs.push(r);
+  if(!save(K.recs,recs)){ toast("No se pudo guardar en el celular", true); return; }
+  save(K.draft,null); fillForm(null); go("1");
+  toast("✅ Registro guardado");
+  syncPending(true);
+};
+
+/* ---------- Envío a Google Sheets ---------- */
+let syncing=false;
+async function sendOne(r){
+  const body=JSON.stringify({ id:r.id, fecha:fmt(r.fecha), producto:r.producto, loteBase:r.loteBase, agregado:r.agregado,
+    fr200:r.fr200, fr360:r.fr360, potes1kg:r.potes1kg, loteElab:r.loteElab, venc:fmt(r.venc), obs:r.obs,
+    responsable:r.responsable, guardado:r.guardado });
+  // text/plain evita el "preflight" CORS; no-cors porque Apps Script redirige
+  await fetch(sheetUrl(), { method:"POST", mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body });
+}
+async function syncPending(quiet){
+  if(syncing) return; const url=sheetUrl();
+  if(!url){ if(!quiet) toast("Falta configurar la planilla de Google (⚙️)", true); updStatus(); return; }
+  if(!navigator.onLine){ if(!quiet) toast("Sin internet: se enviará después", true); updStatus(); return; }
+  syncing=true; let ok=0, fail=0;
+  const recs=load(K.recs,[]);
+  for(const r of recs){ if(r.enviado) continue;
+    try{ await sendOne(r); r.enviado=true; ok++; save(K.recs,recs); }catch(e){ fail++; } }
+  syncing=false;
+  if(ok && !quiet) toast("📤 Enviados a la planilla: "+ok);
+  if(ok && quiet) toast("✅ Guardado y enviado a la planilla");
+  if(fail) toast("No se pudo enviar "+fail+". Se reintentará.", true);
+  updStatus(); if(tab==="h") renderHist();
+}
+$("btnSync").onclick=()=>syncPending(false);
+window.addEventListener("online",()=>syncPending(true));
+
+function updStatus(){
+  const pend=load(K.recs,[]).filter(r=>!r.enviado).length, el=$("syncStatus");
+  if(!sheetUrl()) el.textContent="⚠️ La planilla de Google todavía no está configurada. Los registros quedan guardados en el celular.";
+  else if(pend) el.textContent="⏳ Hay "+pend+" registro(s) guardados en el celular esperando enviarse.";
+  else el.textContent="✅ Todo está enviado a la planilla.";
+  $("btnSync").classList.toggle("hidden", !pend || !sheetUrl());
+}
+
+/* ---------- Historial ---------- */
+function renderHist(){
+  const me=load(K.cur,""), list=$("histList");
+  const mine=load(K.recs,[]).filter(r=>r.responsable===me).slice(-20).reverse();
+  updStatus();
+  if(!mine.length){ list.innerHTML='<li class="empty">Aún no guardó registros.</li>'; return; }
+  list.innerHTML=mine.map(r=>{
+    const rows=["producto","loteBase","agregado","potes1kg","fr200","fr360","loteElab","venc","obs"]
+      .filter(f=>r[f]).map(f=>`<dt>${LABELS[f]}</dt><dd>${esc(f==="venc"?fmt(r[f]):r[f])}</dd>`).join("");
+    return `<li><div class="top"><span>📅 ${esc(fmt(r.fecha))}</span>
+      <span class="tag ${r.enviado?"ok":"pend"}">${r.enviado?"✔ En planilla":"⏳ Pendiente"}</span></div>
+      <dl>${rows}</dl></li>`;
+  }).join("");
+}
+
+/* ---------- Opciones ---------- */
+$("btnCfg").onclick=()=>go(tab==="cfg"?"1":"cfg");
+$("btnCloseCfg").onclick=()=>go("1");
+$("btnChangeUser").onclick=()=>{ save(K.cur,""); showUserScreen(); };
+$("btnNew").onclick=()=>{ save(K.draft,null); fillForm(null); go("1"); toast("Formulario limpio"); };
+$("btnSaveCfg").onclick=()=>{ const v=$("cfgUrl").value.trim();
+  if(v && !/^https:\/\/script\.google\.com\/.+\/exec/.test(v)){ toast("La dirección debe terminar en /exec", true); return; }
+  save(K.url,v); toast("Dirección guardada"); syncPending(true); go("1"); };
+
+/* ---------- Inicio ---------- */
+function startApp(){
+  $("vUser").classList.add("hidden"); $("vApp").classList.remove("hidden");
+  $("who").textContent=load(K.cur,""); fillForm(load(K.draft,null)); go("1"); syncPending(true);
+}
+load(K.cur,"") ? startApp() : showUserScreen();
+</script>
+</body>
+</html>
